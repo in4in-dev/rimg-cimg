@@ -1,7 +1,7 @@
 build
 test
 package-lock.json
-node_mobules
+node_modules
 .idea
 .DS_Store
 **/.DS_Store
