@@ -3,5 +3,29 @@
     "axios": "^0.27.2",
     "colors": "^1.4.0",
     "form-data": "^4.0.0"
-  }
+  },
+  "name": "image-compressor",
+  "description": "This is a very handy recursive image compressor and metadata remover! Simple to use!",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {},
+  "devDependencies": {},
+  "scripts": {
+    "cimg": "node ./cimg.js",
+    "rimg" : "node ./rimg.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/in4in-dev/rimg-cimg.git"
+  },
+  "author": "IN4IN",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/in4in-dev/rimg-cimg/issues"
+  },
+  "bin": {
+    "cimg": "node ./cimg.js",
+    "rimg" : "node ./rimg.js"
+  },
+  "homepage": "https://github.com/in4in-dev/rimg-cimg#readme"
 }
