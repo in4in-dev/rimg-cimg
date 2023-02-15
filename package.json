@@ -4,7 +4,7 @@
     "colors": "^1.4.0",
     "form-data": "^4.0.0"
   },
-  "name": "image-compressor",
+  "name": "picture-compress",
   "description": "This is a very handy recursive image compressor and metadata remover! Simple to use!",
   "version": "1.0.0",
   "main": "index.js",

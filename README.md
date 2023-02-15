@@ -2,7 +2,12 @@
 
 This is a very handy recursive image compressor and metadata remover! Simple to use!
 
-### Aliases
+### Install
+```sh
+npm i -g picture-compress
+```
+
+### Or use aliases
 
 ```sh
 alias cimg='node /path_to_project/cimg.js'
