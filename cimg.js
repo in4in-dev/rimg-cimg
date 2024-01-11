@@ -10,24 +10,6 @@ function getFileSize(path){
 	return fs.statSync(path).size;
 }
 
-sharp.prototype.toFileForce = async function(path){
-
-	return new Promise((resolve, reject) => {
-
-		this.toBuffer(function(err, buffer){
-
-			if(err) {
-				reject(err);
-			}else{
-				fs.writeFileSync(path, buffer);
-				resolve(this);
-			}
-
-		});
-
-	});
-
-}
 
 async function compressImage(from, to){
 
