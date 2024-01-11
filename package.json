@@ -1,18 +1,19 @@
 {
   "dependencies": {
+    "@img/sharp-darwin-arm64": "^0.33.1",
     "axios": "^0.27.2",
     "colors": "^1.4.0",
-    "form-data": "^4.0.0"
+    "form-data": "^4.0.0",
+    "sharp": "^0.33.1"
   },
   "name": "picture-compress",
   "description": "This is a very handy recursive image compressor and metadata remover! Simple to use!",
   "version": "1.0.0",
   "main": "index.js",
   "directories": {},
-  "devDependencies": {},
   "scripts": {
     "cimg": "node ./cimg.js",
-    "rimg" : "node ./rimg.js"
+    "rimg": "node ./rimg.js"
   },
   "repository": {
     "type": "git",
@@ -24,8 +25,8 @@
     "url": "https://github.com/in4in-dev/rimg-cimg/issues"
   },
   "bin": {
-    "cimg": "node ./cimg.js",
-    "rimg" : "node ./rimg.js"
+    "cimg": "./cimg.js",
+    "rimg": "./rimg.js"
   },
   "homepage": "https://github.com/in4in-dev/rimg-cimg#readme"
 }

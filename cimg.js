@@ -1,69 +1,29 @@
 require('colors');
 
 let fs = require('fs');
-let axios = require('axios');
-let FormData = require('form-data');
 let path = require('path');
-let crypto = require('crypto');
+let sharp = require('sharp');
 
-function sha1(s){
-
-	return crypto
-		.createHash('sha1')
-		.update(s)
-		.digest('hex');
-
+function getFileSize(path){
+	return fs.statSync(path).size;
 }
 
-async function sleep(time){
+sharp.prototype.toFileForce = async function(path){
 
-	return new Promise(r => {
-		setTimeout(r, time)
+	return new Promise((resolve, reject) => {
+
+		this.toBuffer(function(err, buffer){
+
+			if(err) {
+				reject(err);
+			}else{
+				fs.writeFileSync(path, buffer);
+				resolve(this);
+			}
+
+		});
+
 	});
-
-}
-
-async function updateImage(from){
-
-	let form = new FormData;
-	let file = fs.readFileSync(from);
-
-	let id = sha1(
-		Math.random().toString()
-	);
-
-	let ext = path.extname(from);
-
-	form.append('file', file, id + ext);
-	form.append('id', 'file_' + id);
-	form.append('name', id + ext);
-	form.append('rnd', Math.random());
-
-	let response = await axios.post('https://imagecompressor.com/upload/gm019o41kgi4haq1', form, {
-		timeout : 20000
-	});
-
-	if(typeof response.data === 'object' && ('image' in response.data)){
-		return response.data.image;
-	}
-
-	throw 'Cant upload file';
-
-}
-
-async function registerImage(fid){
-	return axios.get('https://imagecompressor.com/auto/gm019o41kgi4haq1/' + fid + '?quality=100&rnd=' + Math.random());
-}
-
-async function getImageInfo(fid){
-
-	let response = await axios.get('https://imagecompressor.com/status/gm019o41kgi4haq1/' + fid + '?rnd=' + Math.random());
-
-	if(typeof response.data === 'object' && ('status' in response.data)){
-		return response.data;
-	}
-
-	throw 'Cant get status';
 
 }
 
@@ -71,35 +31,24 @@ async function compressImage(from, to){
 
 	try {
 
-		let image = await updateImage(from);
+		let input = await sharp(from);
+		let inputSize = getFileSize(from);
 
-		await registerImage(image.fid);
+		let output = await input.png({compressionLevel : 9});
 
-		while (true) {
-
-			await sleep(500);
-
-			let info = await getImageInfo(image.fid);
-
-			if (info.status === 'success') {
-
-				console.log('Compressed:'.green, from.blue, to.cyan, info.savings);
-
-				let stream = await axios.get('https://imagecompressor.com' + info.optimized_url, {
-					responseType: "stream"
-				});
-
-				await stream.data.pipe(
-					fs.createWriteStream(to)
-				);
-
-				return true;
-
-			} else if(info.status !== 'processing') {
-				throw 'Error';
-			}
-
+		if(from === to){
+			await output.toFileForce(to);
+		}else{
+			await output.toFile(to);
 		}
+
+		let outputSize = getFileSize(to);
+
+		let percent = (outputSize / inputSize);
+		percent = (1 - percent);
+		percent = Math.floor(percent * 100);
+
+		console.log('Compressed:'.green, from.blue, to.cyan, percent + '%');
 
 	}catch (e){
 		console.log('Error:'.red, from.blue);

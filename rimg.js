@@ -1,40 +1,31 @@
 require('colors');
 
 let fs = require('fs');
-let axios = require('axios');
-let FormData = require('form-data');
 let path = require('path');
-let crypto = require('crypto');
+let sharp = require('sharp');
 
-function sha1(s){
-	return crypto.createHash('sha1')
-	.update(s)
-	.digest('hex');
+sharp.prototype.toFileForce = async function(path){
+
+	return new Promise(resolve => {
+
+		this.toBuffer(function(err, buffer){
+			fs.writeFileSync(path, buffer);
+			resolve(this);
+		});
+
+	});
+
 }
 
-async function updateImage(from){
+sharp.prototype.getBuffer = async function(){
 
-	let form = new FormData;
-	let file = fs.readFileSync(from);
+	return new Promise((resolve, reject) => {
 
-	let id = sha1(
-		Math.random().toString()
-	);
+		this.toBuffer((err, buffer) => {
+			err ? reject(err) : resolve(buffer);
+		});
 
-	let session = Math.random() * 1000000;
-
-	let ext = path.extname(from);
-
-	form.append('file', file, id + ext);
-	form.append('session', session);
-
-	let response = await axios.post('https://coding.tools/exif-remover', form);
-
-	if(typeof response.data === 'object' && ('download_file_path' in response.data)){
-		return response.data.download_file_path;
-	}
-
-	throw 'Cant upload file';
+	});
 
 }
 
@@ -42,15 +33,20 @@ async function exifRemoveImage(from, to){
 
 	try {
 
-		let image = await updateImage(from);
+		let inputBuffer = fs.readFileSync(from);
+		let input = await sharp(inputBuffer);
+		let inputMetadata = await input.metadata();
 
-		let stream = await axios.get(image, {
-			responseType: "stream"
-		});
+		let output = await sharp({
+			create: {
+				width : inputMetadata.width,
+				height : inputMetadata.height,
+				channels: 4,
+				background: { r: 0, g: 0, b: 0, alpha: 0 }
+			}
+		}).composite([{input: inputBuffer, top: 0, left: 0}]);
 
-		await stream.data.pipe(
-			fs.createWriteStream(to)
-		);
+		await output.toFile(to);
 
 		console.log('Exif removed:'.green, from.blue, to.cyan);
 
