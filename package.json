@@ -8,7 +8,7 @@
   },
   "name": "picture-compress",
   "description": "This is a very handy recursive image compressor and metadata remover! Simple to use!",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "main": "index.js",
   "directories": {},
   "scripts": {
