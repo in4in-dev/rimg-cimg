@@ -1,33 +1,10 @@
+#!/usr/bin/env node
+
 require('colors');
 
 let fs = require('fs');
 let path = require('path');
 let sharp = require('sharp');
-
-sharp.prototype.toFileForce = async function(path){
-
-	return new Promise(resolve => {
-
-		this.toBuffer(function(err, buffer){
-			fs.writeFileSync(path, buffer);
-			resolve(this);
-		});
-
-	});
-
-}
-
-sharp.prototype.getBuffer = async function(){
-
-	return new Promise((resolve, reject) => {
-
-		this.toBuffer((err, buffer) => {
-			err ? reject(err) : resolve(buffer);
-		});
-
-	});
-
-}
 
 async function exifRemoveImage(from, to){
 
@@ -92,7 +69,6 @@ async function exifRemoveDirectoryImages(from, to){
 	});
 
 }
-
 
 //////////////////////
 if(process.argv.length < 3){

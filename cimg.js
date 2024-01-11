@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 require('colors');
 
 let fs = require('fs');
@@ -31,16 +33,13 @@ async function compressImage(from, to){
 
 	try {
 
-		let input = await sharp(from);
+		let inputBuffer = fs.readFileSync(from);
+		let input = await sharp(inputBuffer);
 		let inputSize = getFileSize(from);
 
 		let output = await input.png({compressionLevel : 9});
 
-		if(from === to){
-			await output.toFileForce(to);
-		}else{
-			await output.toFile(to);
-		}
+		await output.toFile(to);
 
 		let outputSize = getFileSize(to);
 
